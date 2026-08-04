@@ -56,9 +56,11 @@ model Session {
 
 model Device {
   id        String   @id @default(cuid())
+  userId    String?
   sessionId String
   label     String
   lastSeen  DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   @@index([sessionId])
 }
@@ -132,6 +134,7 @@ model Message {
   updatedAt      DateTime    @updatedAt
   chat           Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
   sender         User        @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  media          Media[]
   reactions      Reaction[]
   @@index([chatId, createdAt])
   @@index([senderId])
