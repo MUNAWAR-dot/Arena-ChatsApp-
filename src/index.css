@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+:root {
+  --wa-bg-app: #111b21;
+  --wa-bg-panel: #202c33;
+  --wa-bg-chat-hover: #202c33;
+  --wa-bg-input: #202c33;
+  --wa-bg-bubble-me: #005c4b;
+  --wa-bg-bubble-them: #202c33;
+  --wa-bg-wallpaper: #0b141a;
+  --wa-text: #e9edef;
+  --wa-text-muted: #8696a0;
+  --wa-text-bubble-me: #ffffff;
+  --wa-text-bubble-them: #ffffff;
+  --wa-border: #222d34;
+  --wa-accent: #00a884;
+  --wa-font-base: 14px;
+  --wa-font-sm: 12px;
+  --wa-font-lg: 16px;
+}
+
+/* Themed atomic helpers */
+.bg-app { background-color: var(--wa-bg-app); }
+.bg-panel { background-color: var(--wa-bg-panel); }
+.bg-input-themed { background-color: var(--wa-bg-input); }
+.bg-bubble-me { background-color: var(--wa-bg-bubble-me); }
+.bg-bubble-them { background-color: var(--wa-bg-bubble-them); }
+.bg-wallpaper { background-color: var(--wa-bg-wallpaper); }
+.text-themed { color: var(--wa-text); }
+.text-muted-themed { color: var(--wa-text-muted); }
+.border-themed { border-color: var(--wa-border); }
+.text-bubble-me { color: var(--wa-text-bubble-me); }
+.text-bubble-them { color: var(--wa-text-bubble-them); }
+
+/* Hover for chat list rows */
+.hover-chat:hover { background-color: var(--wa-bg-chat-hover); }
+.active-chat:active { background-color: var(--wa-bg-chat-hover); }
+
+/* Apply chat font size */
+.font-chat { font-size: var(--wa-font-base); }
+.font-chat-sm { font-size: var(--wa-font-sm); }
+.font-chat-lg { font-size: var(--wa-font-lg); }
+
+/* Animations */
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes bubblePop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes screenIn {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-4deg); }
+  75% { transform: rotate(4deg); }
+}
+.animate-slide-up { animation: slideUp 0.2s ease-out; }
+.animate-fade-in { animation: fadeIn 0.2s ease-out; }
+.animate-screen-in { animation: screenIn 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+.animate-bubble-pop { animation: bubblePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.animate-logo-float { animation: logoFloat 3.5s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 0.5s ease-in-out; }
+
+/* Shimmer loading bar (Chatsapp green) */
+.shimmer-bar {
+  background: linear-gradient(90deg, #0BA95B 25%, #2BE37F 50%, #0BA95B 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+/* Brand hover transitions everywhere */
+button { transition: transform 0.15s ease, background-color 0.2s ease, opacity 0.2s ease; }
+button:active { transform: scale(0.96); }
+
+/* Message bubble entrance */
+.msg-in { animation: bubblePop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(134, 150, 160, 0.3); border-radius: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ─────────── Light Theme Overrides ───────────
+   When <html class="theme-light">, remap WhatsApp dark palette to light palette. */
+html.theme-light [class*="bg-[#111b21]"] { background-color: #ffffff !important; }
+html.theme-light [class*="bg-[#0b141a]"] { background-color: #efeae2 !important; }
+html.theme-light [class*="bg-[#202c33]"] { background-color: #f0f2f5 !important; }
+html.theme-light [class*="bg-[#233138]"] { background-color: #e9edef !important; }
+html.theme-light [class*="bg-[#182229]"] { background-color: #f0f2f5 !important; }
+html.theme-light [class*="bg-[#1f2c33]"] { background-color: #e9edef !important; }
+html.theme-light [class*="bg-[#181f24]"] { background-color: #f5f6f6 !important; }
+html.theme-light [class*="border-[#222d34]"] { border-color: #e9edef !important; }
+html.theme-light [class*="border-[#0b141a]"] { border-color: #e9edef !important; }
+html.theme-light [class*="ring-offset-[#111b21]"] { --tw-ring-offset-color: #ffffff !important; }
+
+/* Text: dark text on light surfaces */
+html.theme-light [class*="text-white"] { color: #111b21 !important; }
+html.theme-light [class*="text-zinc-200"] { color: #111b21 !important; }
+html.theme-light [class*="text-zinc-300"] { color: #3b4a54 !important; }
+html.theme-light [class*="text-white/"] { color: #3b4a54 !important; }
+html.theme-light [class*="text-zinc-500"] { color: #667781 !important; }
+
+/* Keep sent-bubble text white on green, them-bubble becomes white bg with dark text */
+html.theme-light [class*="bg-[#005c4b]"] { background-color: #d9fdd3 !important; }
+html.theme-light [class*="bg-[#005c4b]"] { color: #111b21 !important; }
+html.theme-light [class*="bg-[#005c4b]"] span, 
+html.theme-light [class*="bg-[#005c4b]"] div { color: inherit; }
+
+/* Input areas */
+html.theme-light [class*="bg-[#111b21]"] input,
+html.theme-light [class*="bg-[#111b21]"] textarea { color: #111b21; }
+
+/* Ticks stay visible */
+html.theme-light svg path[fill="#53bdeb"] { fill: #00a884; }
+
+/* Full-screen media surfaces (status viewer, calls, camera) keep white text */
+html.theme-light .theme-keep-white,
+html.theme-light .theme-keep-white [class*="text-white"] { color: #ffffff !important; }
+html.theme-light .theme-keep-white [class*="text-zinc-"] { color: #d4d4d8 !important; }
+html.theme-light .theme-keep-white [class*="text-white/"] { color: rgba(255,255,255,0.7) !important; }
