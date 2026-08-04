@@ -18,7 +18,7 @@ import { z } from "zod";
 import webpush from "web-push";
 import { OAuth2Client } from "google-auth-library";
 import { PrismaClient, MsgStatus } from "@prisma/client";
-
+import bycrypt  from 'bycrypt' ; 
 const prisma = new PrismaClient();
 
 // Real web push (VAPID). Configure VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY on the
