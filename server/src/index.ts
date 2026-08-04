@@ -18,7 +18,8 @@ import { z } from "zod";
 import webpush from "web-push";
 import { OAuth2Client } from "google-auth-library";
 import { PrismaClient, MsgStatus } from "@prisma/client";
-import bycrypt  from 'bycrypt' ; 
+import bcrypt from 'bcrypt';
+
 const prisma = new PrismaClient();
 
 // Real web push (VAPID). Configure VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY on the
@@ -137,6 +138,103 @@ app.post("/auth/verify", async (req, reply) => {
   } catch (e: any) {
     return reply.code(e?.statusCode || 400).send({ error: e?.message || "bad request" });
   }
+});
+
+// ===== ✅ REGISTER WITH EMAIL/PASSWORD =====
+app.post("/auth/register", async (req, reply) => {
+  try {
+    const body = z.object({
+      email: z.string().email(),
+      password: z.string().min(6),
+      username: z.string().min(3).optional()
+    }).parse(req.body);
+
+    // Check if email exists
+    const existing = await prisma.user.findFirst({
+      where: { 
+        OR: [
+          { email: body.email },
+          { phone: "email:" + body.email }
+        ]
+      }
+    });
+    
+    if (existing) {
+      return reply.code(400).send({ error: "Email already registered" });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        phone: "email:" + body.email,
+        email: body.email,
+        username: body.username || body.email.split("@")[0],
+        password: hashedPassword,
+        publicKey: "",
+        verified: true
+      }
+    });
+
+    // Create session
+    const session = await issueSession(user.id);
+    return { user, ...session };
+    
+  } catch (e: any) {
+    return reply.code(400).send({ error: e?.message || "Registration failed" });
+  }
+});
+
+// ===== ✅ LOGIN WITH EMAIL/PASSWORD =====
+app.post("/auth/login", async (req, reply) => {
+  try {
+    const body = z.object({
+      email: z.string().email(),
+      password: z.string()
+    }).parse(req.body);
+
+    // Find user
+    const user = await prisma.user.findFirst({
+      where: { 
+        OR: [
+          { email: body.email },
+          { phone: "email:" + body.email }
+        ]
+      }
+    });
+    
+    if (!user) {
+      return reply.code(401).send({ error: "Invalid credentials" });
+    }
+    
+    if (!user.password) {
+      return reply.code(401).send({ error: "Please login with your registered method" });
+    }
+
+    // Verify password
+    const valid = await bcrypt.compare(body.password, user.password);
+    if (!valid) {
+      return reply.code(401).send({ error: "Invalid credentials" });
+    }
+
+    // Create session
+    const session = await issueSession(user.id);
+    return { user, ...session };
+    
+  } catch (e: any) {
+    return reply.code(400).send({ error: e?.message || "Login failed" });
+  }
+});
+
+// ===== ✅ GET CURRENT USER =====
+app.get("/auth/me", async (req, reply) => {
+  const user = await userFromToken(req.headers.authorization?.replace("Bearer ", ""));
+  if (!user) {
+    return reply.code(401).send({ error: "Unauthorized" });
+  }
+  return { user };
 });
 
 /**
