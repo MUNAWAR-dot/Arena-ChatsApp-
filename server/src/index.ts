@@ -234,7 +234,7 @@ async function sendPush(userId: string, title: string, body: string, url = "/") 
   if (!subs.length || !process.env.VAPID_PUBLIC_KEY) return;
   const payload = JSON.stringify({ title, body, url, tag: "chatsapp-" + Date.now() });
   await Promise.allSettled(
-    subs.map((sub) => webpush.sendNotification(sub, payload).catch((e) => {
+    subs.map((sub) => webpush.sendNotification(sub, payload).catch((e: any) => {
       // 404/410 = subscription expired — drop it
       if (e?.statusCode === 404 || e?.statusCode === 410) {
         pushSubs.set(userId, pushSubs.get(userId)!.filter((s) => s.endpoint !== sub.endpoint));
