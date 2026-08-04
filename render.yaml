@@ -1,0 +1,28 @@
+# ── Chatsapp free-tier deployment blueprint (Render) ─────────
+# Database: use Neon (free Postgres) and paste its connection string
+# into the DATABASE_URL env below, or replace with any Postgres provider.
+#
+# Deploy: push this repo to GitHub → Render → New Blueprint → select repo.
+
+services:
+  - type: web
+    name: chatsapp-server
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npx prisma db push --accept-data-loss && node dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false # set manually from Neon
+      - key: PORT
+        value: 3001
+      - key: CORS_ORIGIN
+        value: https://chatsapp.netlify.app # replace with your Netlify URL
+      - key: SMS_SIMULATION_DELIVERY
+        value: "0"
+      - key: GOOGLE_CLIENT_ID
+        sync: false # optional: Google OAuth client ID
+      - key: SESSION_SECRET
+        generateValue: true

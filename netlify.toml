@@ -1,0 +1,22 @@
+# ── Chatsapp frontend deployment (Netlify, free) ─────────────
+# Set VITE_SOCKET_URL in Netlify UI (Site settings → Environment) to your
+# Render server URL, e.g. https://chatsapp-server.onrender.com
+# If left unset, the client connects same-origin (/socket.io).
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback + Socket.IO proxy-free (client connects to Render directly)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
